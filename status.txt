@@ -1,0 +1,57 @@
+Broadband Status
+Primary Broadband
+Broadband Connection Source
+Cellular
+Broadband Connection
+Up
+Broadband IPv4 Address
+100.64.15.238
+Primary DNS
+172.26.38.3
+Secondary DNS
+MTU
+1430
+IPv6
+Status
+Available
+Service Type
+native IPv6
+Global Unicast IPv6 Address
+2600:381:5c28:769:b13b:b9a4:33a0:fe51
+Link Local Address
+fe80::200:ff:fe00:0
+Primary DNS
+2606:ae00:2f00:4102::300
+MTU
+1430
+IPv4 Statistics
+Receive Packets
+271916489
+Transmit Packets
+124212478
+Receive Bytes
+313450332358
+Transmit Bytes
+51729048530
+Mobility Status
+ICCID
+89014103334694352497
+IMEI
+352530783188949
+IMSI
+310410469453019
+SIM Status
+OK
+RAN Mode
+NR NSA
+Attach Status
+Attached
+Serving Cell
+PLMNID
+310410
+RSRP
+-106
+RSRQ
+-10
+SINR
+14
