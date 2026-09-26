@@ -1,47 +1,28 @@
-# Router Watch — Ethical Home-Network Intrusion Check
+# Router Watch — ethical home-network intrusion audit & privacy shield
 
-A small Python toolkit to help you audit **your own** router and Wi-Fi network:
+Stdlib-only Python. Observe, identify, harden. **Never attack.**
 
-- See what devices are connected (ARP table + subnet scan)
-- Detect MAC spoofing / duplicate IPs (classic "evil twin inside your LAN" signs)
-- Detect promiscuous-mode NICs (a device sniffing everyone's traffic)
-- Find open ports / UPnP holes on your router
-- Spot DNS hijacking (router changed your DNS behind your back)
-- Baseline & diff scans so you can see what CHANGED since last week
-- Generate a human-readable HTML report with red flags
+## Commands
+| Command | What it does |
+|---|---|
+| `python3 router_watch.py audit --save-baseline` | Full LAN audit (hosts, spoofing, sniffers, open ports, DNS). Save when clean. |
+| `python3 router_watch.py audit --html report.html` | Re-audit + severity-ranked findings + HTML report (diffs vs baseline). |
+| `python3 router_watch.py logscan firewall_logs/att_log1.txt` | Parse router firewall drop-log: cluster sources, score behavior (scan vs benign retransmit), auto-ID owners via RDAP/rDNS. `--no-id` = offline. |
+| `python3 router_watch.py whois 52.70.199.254 ...` | Passive owner identification for any IP(s) in your logs. |
+| `python3 router_watch.py egress [--watch --seconds 30]` | Live view of what YOUR computer is sending out and to whom (ss/lsof based). |
+| `python3 router_watch.py privacy` | DNS-resolver leak check, IPv6-egress leak, proxy env, what a website sees right now, hardening checklist. |
+| `python3 router_watch.py block <LAN-IP> [--apply]` | Defensive firewall block on this machine (dry-run default). Refuses remote IPs by design. |
+| `python3 router_watch.py evict <MAC> <LAN-IP>` | Step-by-step rogue Wi-Fi client eviction via your router. |
+| `python3 router_watch.py rules` | Audit current local deny rules. |
+| `python3 router_watch.py watch --interval 600` | Background daemon: alerts the moment a new host or MAC swap appears. |
+| `python3 router_watch.py refuse "reverse attack"` | The tool's own answer to offensive requests. |
 
-## Ethics / legal note
+## Ethics (non-negotiable, see netlib/ethics.py)
+- **No reverse attacks, ever.** Hitting back at internet IPs is illegal (CFAA et al.) even if they scanned you — and your firewall already dropped them. Response = block, evict, rotate credentials.
+- Action commands (`block`, `evict`) are guarded to RFC1918 LAN space you administer; remote IPs get router-side instructions instead.
+- Identification is passive registry data only (RDAP/rDNS); we never probe third-party hosts.
+- Only audit networks you own or administer.
 
-Only run this against networks **you own or administer**. The tool refuses to
-target anything outside your local subnet by default. It performs passive reads
-and light, standard checks (ARP ping, TCP connect-scan of a few ports) — no
-exploits, no deauth attacks, no password cracking.
-
-## Usage
-
-```bash
-# 1. Auto-detect gateway + interface, full audit
-python3 router_watch.py audit
-
-# 2. Save a baseline, then re-run later and see what changed
-python3 router_watch.py audit --save-baseline
-python3 router_watch.py audit --diff-baseline
-
-# 3. Individual checks
-python3 router_watch.py hosts          # who's on the LAN
-python3 router_watch.py spoof          # MAC/IP conflict detection
-python3 router_watch.py sniffer        # promiscuous-mode detection
-python3 router_watch.py ports          # router open-port probe
-python3 router_watch.py dns            # DNS hijack check
-
-# 4. Pretty report
-python3 router_watch.py audit --html report.html
-```
-
-Works best as root (needs raw sockets for the sniffer check). Without root it
-will skip that check and still do everything else.
-
-## Files
-
-- `router_watch.py` — CLI entry point
-- `netlib/` — check modules (hosts, spoof, sniffer, ports, dns, baseline)
+## Reading your AT&T gateway
+- "Generic Discards" rows = inbound packets **blocked** by the firewall. Seeing CloudFront/Apple/Google/Akamai/Twilio IPs with backoff-timer patterns = normal reply traffic from services your devices use. Not intruders.
+- Who can see your router page: anyone who reaches `http://192.168.1.254` (devices on your LAN) plus AT&T management (TR-069/Firmware). Disable remote administration, keep unique admin password, and check the client list against `audit` output.
