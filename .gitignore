@@ -1,4 +1,9 @@
-node_modules/
+# Compiled and build artifacts
+__pycache__/
+*.pyc
+
+# Generated reports
+report.htmlnode_modules/
 .next/
 dist/
 build/
