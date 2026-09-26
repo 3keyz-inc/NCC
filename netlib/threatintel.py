@@ -106,7 +106,8 @@ def classify(ip: str) -> dict:
     """Return {'ip','rdns','org','country','category','verdict'} for display."""
     rd = rdns(ip)
     w = whois_org(ip)
-    hay = f"{rd} {w.get('org','')} {w.get('name','')}"
+    hay = (f"{rd} {w.get('org','')} {w.get('name','')} "
+           f"{w.get('handle','')}")
     category = "unknown"
     for needle, label in ORG_PATTERNS:
         if needle in hay.lower():
