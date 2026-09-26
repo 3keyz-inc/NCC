@@ -1,0 +1,9 @@
+(empty)node_modules/
+.next/
+dist/
+build/
+*.log
+node_modules/
+
+watch.log
+.threatintel_cache.json
